@@ -6,4 +6,3 @@ release/
 *.log
 .workbuddy/
 build/icon.icns
-build/icon.ico.workbuddy/
