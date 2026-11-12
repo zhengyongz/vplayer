@@ -102,6 +102,35 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           overwrite_files: true
+          body: |
+            ## VPlayer v0.1.0 — 极简视频播放器 / Minimalist Video Player
+
+            **本地 / 网址 / 局域网 SMB 三源播放 · 中英双语 · 差量升级**
+            **Play from local / URL / LAN SMB · Bilingual UI · Delta updates**
+
+            ### 功能 / Features
+            - 本地文件：拖拽 / 打开 / 文件关联（MP4/MKV/WebM/AVI/MOV/WMV/FLV/TS 等）
+              Local files: drag & drop / dialog / file-association
+            - 网址：http/https 视频（含 m3u8/HLS）
+              URL: http/https videos (incl. m3u8/HLS)
+            - 局域网 SMB：内置浏览共享，流式播放（凭据 safeStorage 加密）
+              LAN SMB: built-in share browser, stream playback
+            - 原生优先：MP4/WebM/MOV/Ogg 直接播放，零依赖
+              Native first: MP4/WebM/MOV/Ogg play directly, zero dependency
+            - 可选编解码组件(ffmpeg)：MKV/AVI/WMV/FLV/TS 按需转码渐进播放
+              Optional codec(ffmpeg): MKV/AVI/WMV/FLV/TS transcoded on demand
+            - 差量升级：Windows blockmap 差量 / Linux deb / macOS 手动
+              Delta updates: Windows blockmap / Linux deb / macOS manual
+
+            ### 安装包 / Installers
+            - macOS (Intel): `VPlayer-0.1.0-mac.zip`
+            - macOS (Apple Silicon): `VPlayer-0.1.0-arm64-mac.zip`
+            - Windows: `VPlayer-0.1.0-Setup.exe`
+            - Linux: `vplayer_0.1.0_amd64.deb`
+            - 编解码组件(可选) / Codec component (optional): `VPlayer-codec-0.1.0-<platform>.zip`
+
+            > macOS 未签名：首次打开请右键 → 打开确认一次；若提示"已损坏"执行 `xattr -cr /Applications/VPlayer.app`
+            > macOS unsigned: right-click → Open once on first launch
           files: |
             release/*.dmg
             release/*.zip
