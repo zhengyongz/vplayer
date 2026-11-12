@@ -1,0 +1,113 @@
+# 三平台自动构建与发版：推 v* tag 触发（workflow_dispatch 仅供调试，不打 tag 不上传）
+# 关键约定：
+#   - 只缓存 ~/.npm，绝不缓存 node_modules
+#   - electron-builder 一律 --publish never，Release 统一由 softprops/action-gh-release 上传
+#   - fail-fast: false —— 单平台失败不影响其余平台
+#   - 编解码组件：每平台各自 `npm i -D ffmpeg-static` 产出对应平台的 ffmpeg，再 pack-codec
+name: Build and Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            platform: mac
+          - os: windows-latest
+            platform: win
+          - os: ubuntu-latest
+            platform: linux
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Cache electron-builder downloads
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/electron
+            ~/.cache/electron-builder
+          key: electron-builder-${{ runner.os }}-${{ matrix.platform }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            electron-builder-${{ runner.os }}-${{ matrix.platform }}-
+            electron-builder-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build app
+        run: npm run build
+
+      # 编解码组件所需的 ffmpeg 二进制（按平台）
+      - name: Install ffmpeg-static (codec component)
+        run: npm i -D ffmpeg-static
+
+      # ---------- macOS：先用 sips+iconutil 生成 icns（构建产物，不入库）再打包 ----------
+      - name: Generate icns (macOS only)
+        if: matrix.platform == 'mac'
+        run: |
+          mkdir -p AppIcon.iconset
+          sips -z 16 16   build/icon.png --out AppIcon.iconset/icon_16x16.png
+          sips -z 32 32   build/icon.png --out AppIcon.iconset/icon_16x16@2x.png
+          sips -z 32 32   build/icon.png --out AppIcon.iconset/icon_32x32.png
+          sips -z 64 64   build/icon.png --out AppIcon.iconset/icon_32x32@2x.png
+          sips -z 128 128 build/icon.png --out AppIcon.iconset/icon_128x128.png
+          sips -z 256 256 build/icon.png --out AppIcon.iconset/icon_128x128@2x.png
+          sips -z 256 256 build/icon.png --out AppIcon.iconset/icon_256x256.png
+          sips -z 512 512 build/icon.png --out AppIcon.iconset/icon_256x256@2x.png
+          sips -z 512 512 build/icon.png --out AppIcon.iconset/icon_512x512.png
+          cp build/icon.png AppIcon.iconset/icon_512x512@2x.png
+          iconutil -c icns AppIcon.iconset -o build/icon.icns
+
+      - name: Package (macOS)
+        if: matrix.platform == 'mac'
+        run: npx electron-builder --mac dmg zip --x64 --arm64 --publish never
+
+      - name: Package (Windows)
+        if: matrix.platform == 'win'
+        run: npx electron-builder --win nsis --publish never
+
+      - name: Package (Linux)
+        if: matrix.platform == 'linux'
+        run: npx electron-builder --linux deb --publish never
+
+      # 编解码组件 zip + sha256（每平台各产出自己的平台包）
+      - name: Pack codec component
+        run: node build/pack-codec.cjs
+
+      # 清理 electron-builder 调试文件
+      - name: Clean up non-release artifacts
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: node -e "const fs=require('fs');for(const f of ['release/builder-debug.yml','release/latest-linux.yml']){try{fs.rmSync(f);console.log('removed',f)}catch{}}"
+
+      # ---------- 上传资产（仅 tag 推送时） ----------
+      - name: Upload release assets
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          overwrite_files: true
+          files: |
+            release/*.dmg
+            release/*.zip
+            release/*.exe
+            release/*.exe.blockmap
+            release/*.zip.blockmap
+            release/*.deb
+            release/*.yml
+            release/*.sha256

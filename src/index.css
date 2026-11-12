@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  background: #111;
+  color: #e5e7eb;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  overflow: hidden;
+}
+
+/* 自定义视频控制条 */
+.vp-controls input[type="range"] {
+  accent-color: #4f7cff;
+}
+
+video::-webkit-media-controls {
+  display: none !important;
+}
+
+.btn-primary {
+  @apply rounded-md bg-sky-600 px-3 py-1 text-xs font-medium text-white hover:bg-sky-500;
+}
+.btn-neutral {
+  @apply rounded-md bg-neutral-700 px-3 py-1 text-xs text-neutral-200 hover:bg-neutral-600;
+}
+.btn-close {
+  @apply ml-1 rounded p-1 text-neutral-400 hover:bg-neutral-700;
+}
+.inp {
+  @apply w-full rounded-md border border-neutral-600 bg-neutral-800 px-3 py-2 text-sm outline-none focus:border-sky-500;
+}

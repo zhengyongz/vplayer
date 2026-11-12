@@ -1,0 +1,9 @@
+node_modules/
+dist/
+release/
+.temp/
+.smoke-report/
+*.log
+.workbuddy/
+build/icon.icns
+build/icon.ico.workbuddy/

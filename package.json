@@ -1,0 +1,241 @@
+{
+  "name": "vplayer",
+  "private": true,
+  "version": "0.1.0",
+  "description": "极简视频播放器 - 本地/网址/局域网 SMB 三源播放，中英双语，差量升级",
+  "author": "vplayer",
+  "homepage": "https://github.com/zhengyongz/vplayer",
+  "main": "electron/main.cjs",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run build:app",
+    "preview": "vite preview",
+    "electron:dev": "npm run build && electron electron/main.cjs --no-sandbox",
+    "electron:build": "npm run build && electron-builder --linux deb --publish never && node build/pack-codec.cjs",
+    "electron:build:win": "npm run build && electron-builder --win nsis --publish never && node build/pack-codec.cjs",
+    "build:app": "vite build",
+    "status": "node scripts/project-status.mjs",
+    "status:open": "node scripts/project-status.mjs --open",
+    "status:json": "node scripts/project-status.mjs --json",
+    "smoke": "node scripts/smoke/run.mjs",
+    "smoke:static": "node scripts/smoke/run.mjs --layer=L1",
+    "smoke:logic": "node scripts/smoke/run.mjs --layer=L2",
+    "smoke:unit": "node scripts/smoke/run.mjs --layer=L3",
+    "smoke:integration": "node scripts/smoke/run.mjs --layer=L4",
+    "verify": "node scripts/verify.mjs",
+    "handoff": "node scripts/handoff.mjs"
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.11",
+    "smb2": "^0.2.11"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0",
+    "fflate": "^0.8.3",
+    "ffmpeg-static": "^5.2.0",
+    "postcss": "^8.4.49",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^3.4.17",
+    "vite": "^6.0.7"
+  },
+  "build": {
+    "appId": "com.vplayer.app",
+    "productName": "VPlayer",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "zhengyongz",
+        "repo": "vplayer"
+      }
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "afterPack": "build/afterPack.cjs",
+    "fileAssociations": [
+      {
+        "ext": "mp4",
+        "name": "MP4 视频",
+        "description": "MPEG-4 视频",
+        "role": "Viewer",
+        "mimeType": "video/mp4"
+      },
+      {
+        "ext": "mkv",
+        "name": "MKV 视频",
+        "description": "Matroska 视频",
+        "role": "Viewer",
+        "mimeType": "video/x-matroska"
+      },
+      {
+        "ext": "webm",
+        "name": "WebM 视频",
+        "description": "WebM 视频",
+        "role": "Viewer",
+        "mimeType": "video/webm"
+      },
+      {
+        "ext": "avi",
+        "name": "AVI 视频",
+        "description": "AVI 视频",
+        "role": "Viewer",
+        "mimeType": "video/x-msvideo"
+      },
+      {
+        "ext": "mov",
+        "name": "MOV 视频",
+        "description": "QuickTime 视频",
+        "role": "Viewer",
+        "mimeType": "video/quicktime"
+      },
+      {
+        "ext": "m4v",
+        "name": "M4V 视频",
+        "description": "iTunes 视频",
+        "role": "Viewer",
+        "mimeType": "video/x-m4v"
+      },
+      {
+        "ext": "wmv",
+        "name": "WMV 视频",
+        "description": "Windows Media 视频",
+        "role": "Viewer",
+        "mimeType": "video/x-ms-wmv"
+      },
+      {
+        "ext": "flv",
+        "name": "FLV 视频",
+        "description": "Flash 视频",
+        "role": "Viewer",
+        "mimeType": "video/x-flv"
+      },
+      {
+        "ext": "ts",
+        "name": "TS 视频",
+        "description": "MPEG 传输流",
+        "role": "Viewer",
+        "mimeType": "video/mp2t"
+      },
+      {
+        "ext": "mpg",
+        "name": "MPG 视频",
+        "description": "MPEG 视频",
+        "role": "Viewer",
+        "mimeType": "video/mpeg"
+      },
+      {
+        "ext": "mpeg",
+        "name": "MPEG 视频",
+        "description": "MPEG 视频",
+        "role": "Viewer",
+        "mimeType": "video/mpeg"
+      }
+    ],
+    "files": [
+      "dist/**/*",
+      "!dist/codec/**",
+      "electron/**/*",
+      "build/**/*"
+    ],
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "icon": "build/icon.icns",
+      "category": "public.app-category.video",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico",
+      "artifactName": "${productName}-${version}-Setup.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "multiLanguageInstaller": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "极简视频播放器",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "installerHeaderIcon": "build/icon.ico",
+      "deleteAppDataOnUninstall": false,
+      "runAfterFinish": true
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "deb",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "category": "AudioVideo",
+      "icon": "build/icon.png",
+      "maintainer": "vplayer <vplayer@localhost>",
+      "executableArgs": [
+        "--no-sandbox"
+      ],
+      "desktop": {
+        "Name": "极简视频播放器",
+        "Name[en]": "VPlayer",
+        "Comment": "极简视频播放器 - 本地/网址/SMB 播放",
+        "Icon": "vplayer",
+        "Categories": "AudioVideo;Player;",
+        "Terminal": "false"
+      }
+    },
+    "deb": {
+      "packageName": "vplayer",
+      "depends": [
+        "libgtk-3-0",
+        "libnotify4",
+        "libnss3",
+        "libxss1",
+        "libxtst6",
+        "xdg-utils",
+        "libatspi2.0-0",
+        "libdrm2",
+        "libgbm1",
+        "libasound2t64 | libasound2"
+      ]
+    }
+  },
+  "allowScripts": {
+    "electron@33.4.11": true,
+    "esbuild@0.25.12": true,
+    "ffmpeg-static@5.3.0": true
+  }
+}
