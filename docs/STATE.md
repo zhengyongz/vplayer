@@ -49,4 +49,7 @@ ffmpeg 输出 fMP4（`frag_keyframe+empty_moov`），写临时文件并以"增�
 
 ## 历史决策归档
 
+### D-009 · 2026-11-14 · NTLM 认证用纯 JS 补丁（OpenSSL3 兼容）
+Node 24 + OpenSSL 3 默认禁用 legacy 的 **MD4** 与 **DES**，而 smb2 依赖的 ntlm 库两者都用 → 连接时 `session_setup` 崩溃、UI 卡死。修复：给 ntlm 打补丁（`patches/ntlm+0.1.3.patch`，经 patch-package 固化，postinstall 自动应用）：NT hash 用 `js-md4` 纯 JS（`JS_MD4_NO_NODE_JS` 强制 JS 模式）、NTLM 响应用自写纯 JS DES（FIPS 46-3，官方 vector 验证）、LM 发全零、domain 兜底空串。**跨平台、不依赖运行时 legacy flags**。约束：开发时勿直接改 node_modules（用 patch-package 维护补丁）。
+
 （v0.1.0 首版，暂无废止条目）

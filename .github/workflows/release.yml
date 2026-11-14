@@ -94,6 +94,11 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         run: node -e "const fs=require('fs');for(const f of ['release/builder-debug.yml','release/latest-linux.yml']){try{fs.rmSync(f);console.log('removed',f)}catch{}}"
 
+      # 从 tag 提取不带 v 的版本号，供 Release 说明动态使用
+      - name: Set VERSION env
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+
       # ---------- 上传资产（仅 tag 推送时） ----------
       - name: Upload release assets
         if: startsWith(github.ref, 'refs/tags/v')
@@ -103,7 +108,7 @@ jobs:
         with:
           overwrite_files: true
           body: |
-            ## VPlayer v0.1.0 — 极简视频播放器 / Minimalist Video Player
+            ## VPlayer ${{ github.ref_name }} — 极简视频播放器 / Minimalist Video Player
 
             **本地 / 网址 / 局域网 SMB 三源播放 · 中英双语 · 差量升级**
             **Play from local / URL / LAN SMB · Bilingual UI · Delta updates**
@@ -123,11 +128,11 @@ jobs:
               Delta updates: Windows blockmap / Linux deb / macOS manual
 
             ### 安装包 / Installers
-            - macOS (Intel): `VPlayer-0.1.0-mac.zip`
-            - macOS (Apple Silicon): `VPlayer-0.1.0-arm64-mac.zip`
-            - Windows: `VPlayer-0.1.0-Setup.exe`
-            - Linux: `vplayer_0.1.0_amd64.deb`
-            - 编解码组件(可选) / Codec component (optional): `VPlayer-codec-0.1.0-<platform>.zip`
+            - macOS (Intel): `VPlayer-${{ env.VERSION }}-mac.zip`
+            - macOS (Apple Silicon): `VPlayer-${{ env.VERSION }}-arm64-mac.zip`
+            - Windows: `VPlayer-${{ env.VERSION }}-Setup.exe`
+            - Linux: `vplayer_${{ env.VERSION }}_amd64.deb`
+            - 编解码组件(可选) / Codec component (optional): `VPlayer-codec-${{ env.VERSION }}-<platform>.zip`
 
             > macOS 未签名：首次打开请右键 → 打开确认一次；若提示"已损坏"执行 `xattr -cr /Applications/VPlayer.app`
             > macOS unsigned: right-click → Open once on first launch

@@ -1,7 +1,7 @@
 {
   "name": "vplayer",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "极简视频播放器 - 本地/网址/局域网 SMB 三源播放，中英双语，差量升级",
   "author": "vplayer",
   "homepage": "https://github.com/zhengyongz/vplayer",
@@ -9,6 +9,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "postinstall": "patch-package",
     "build": "npm run build:app",
     "preview": "vite preview",
     "electron:dev": "npm run build && electron electron/main.cjs --no-sandbox",
@@ -28,6 +29,7 @@
   },
   "dependencies": {
     "electron-updater": "^6.8.11",
+    "js-md4": "^0.3.2",
     "smb2": "^0.2.11"
   },
   "devDependencies": {
@@ -37,6 +39,7 @@
     "electron-builder": "^25.0.0",
     "fflate": "^0.8.3",
     "ffmpeg-static": "^5.2.0",
+    "patch-package": "^8.0.1",
     "postcss": "^8.4.49",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

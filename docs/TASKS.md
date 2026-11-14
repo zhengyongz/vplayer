@@ -10,7 +10,7 @@
 | B-001 | macOS 无 Developer ID 签名，自动更新被 Gatekeeper 阻止，仅手动下载 | electron/updater.cjs | 已知限制 | - |
 | V-001 | 三平台真机未验证（本机仅 Linux 冒烟通过）；Windows 差量/macOS 手动流程需真机确认 | CI / 打包 | 待验 | - |
 | V-002 | 转码（MKV）渐进播放流畅度未用真实 ffmpeg + 视频文件实测 | codec-component.cjs | 待验 | - |
-| V-003 | SMB 流式播放已改用库底层 Forge（open/read/close，Offset/Length Range），需真实共享联调确认（本机无 SMB 服务器） | smb.cjs / stream-server.cjs | 待验 | - |
+| V-003 | SMB 连接已修复（OpenSSL3 下 NTLM 的 MD4/DES 补丁，patches/ntlm+0.1.3.patch）；握手经真实服务器验证（guest 被拒=认证层通），待用正确账号真机确认列目录/播放 | smb.cjs / patches | 待验 | - |
 
 ## 🟡 中优先级
 
