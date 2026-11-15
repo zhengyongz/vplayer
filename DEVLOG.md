@@ -2,6 +2,22 @@
 
 > 版本技术说明与开发流水。最新在顶部。
 
+## v0.1.2 · 2026-11-15 · SMB 浏览 INVALID_PARAMETER 修复
+
+**问题**：v0.1.1 认证通过后，列目录报 `STATUS_INVALID_PARAMETER (0xC000000D)`（用户真实服务器复现）。诊断（自制 `scripts/smb-diag.cjs` 分步握手）定位至 ④ tree_connect 全过、⑤ CREATE(open_folder) 拒绝。
+
+**根因**：smb2 库的 CREATE 消息把 `CreateContextsOffset` 写成 `0x7A+名长`（非零），但 `CreateContextsLength` 恒为 0——规范要求无 create contexts 时 offset 必须为 0，Samba/严格实现对非零 offset+零长度直接回 `INVALID_PARAMETER`。tree_connect 等其余消息无此字段，故仅 CREATE 失败。
+
+**定位方法**：变量实验脚本逐项覆盖（A 原版复现 ✗ → B 仅改 `CreateContextsOffset=0` → ✓✓ 列目录成功；C/D/F 变体确认其余参数无碍）。
+
+**修复**：`patches/smb2+0.2.11.patch`（patch-package 固化）——4 个 CREATE 消息（open_folder/open/create/create_folder）的 `CreateContextsOffset` 改为 0。
+
+**验证**（用户真实服务器 192.168.0.3，用户账号）：
+- 分步握手 ①②③④⑤ 全 ✓；e2e 列共享根 9 项（正确 [D]/[F] 与大小，中文目录名正常）；
+- 头 16 字节读取 `这是你的新*`（中文 ucs2 正确）；Offset=48 Range 读取 ✓（视频 seek 同机制）。
+
+新增 `scripts/smb-diag.cjs`（SMB 分步握手诊断，供今后排查复用）。
+
 ## v0.1.1 · 2026-11-14 · SMB 连接修复
 
 **问题**：Linux 上（Node 24 + OpenSSL 3）SMB 连接卡在"连接中"无反馈。真实服务器经 GVfs 可达。

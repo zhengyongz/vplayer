@@ -10,7 +10,8 @@
 | B-001 | macOS 无 Developer ID 签名，自动更新被 Gatekeeper 阻止，仅手动下载 | electron/updater.cjs | 已知限制 | - |
 | V-001 | 三平台真机未验证（本机仅 Linux 冒烟通过）；Windows 差量/macOS 手动流程需真机确认 | CI / 打包 | 待验 | - |
 | V-002 | 转码（MKV）渐进播放流畅度未用真实 ffmpeg + 视频文件实测 | codec-component.cjs | 待验 | - |
-| V-003 | SMB 连接已修复（OpenSSL3 下 NTLM 的 MD4/DES 补丁，patches/ntlm+0.1.3.patch）；握手经真实服务器验证（guest 被拒=认证层通），待用正确账号真机确认列目录/播放 | smb.cjs / patches | 待验 | - |
+| V-003 | SMB 真实服务器验证通过：v0.1.2 修复 CREATE 的 CreateContextsOffset 补丁后，握手/列目录/中文文件 Range 读取 e2e 全绿（192.168.0.3/家庭共享）。待用户 0.1.2 真机确认 UI 播放视频 | smb.cjs / patches | 待验 | 0.1.2 |
+| V-004 | v0.1.1 在用户真机出现 STATUS_INVALID_PARAMETER（CREATE 参数错）——已修复（D-010） | patches/smb2 | 已修 | 0.1.2 |
 
 ## 🟡 中优先级
 

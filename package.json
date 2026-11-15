@@ -1,7 +1,7 @@
 {
   "name": "vplayer",
   "private": true,
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "极简视频播放器 - 本地/网址/局域网 SMB 三源播放，中英双语，差量升级",
   "author": "vplayer",
   "homepage": "https://github.com/zhengyongz/vplayer",

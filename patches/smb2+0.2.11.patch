@@ -1,0 +1,52 @@
+diff --git a/node_modules/smb2/lib/messages/create.js b/node_modules/smb2/lib/messages/create.js
+index ab90498..a25bfaf 100644
+--- a/node_modules/smb2/lib/messages/create.js
++++ b/node_modules/smb2/lib/messages/create.js
+@@ -26,7 +26,7 @@ module.exports = message({
+       , 'CreateDisposition':0x00000005
+       , 'CreateOptions':0x00000044
+       , 'NameOffset':0x0078
+-      , 'CreateContextsOffset':0x007A+buffer.length
++      , 'CreateContextsOffset':0x00000000
+       }
+     });
+ 
+diff --git a/node_modules/smb2/lib/messages/create_folder.js b/node_modules/smb2/lib/messages/create_folder.js
+index cd2060c..08d411f 100644
+--- a/node_modules/smb2/lib/messages/create_folder.js
++++ b/node_modules/smb2/lib/messages/create_folder.js
+@@ -26,7 +26,7 @@ module.exports = message({
+       , 'CreateDisposition':0x00000002
+       , 'CreateOptions':0x00000021
+       , 'NameOffset':0x0078
+-      , 'CreateContextsOffset':0x007A+buffer.length
++      , 'CreateContextsOffset':0x00000000
+       }
+     });
+ 
+diff --git a/node_modules/smb2/lib/messages/open.js b/node_modules/smb2/lib/messages/open.js
+index 167caa2..0dfebee 100644
+--- a/node_modules/smb2/lib/messages/open.js
++++ b/node_modules/smb2/lib/messages/open.js
+@@ -22,7 +22,7 @@ module.exports = message({
+         'Buffer':buffer
+       , 'DesiredAccess':0x001701DF
+       , 'NameOffset':0x0078
+-      , 'CreateContextsOffset':0x007A+buffer.length
++      , 'CreateContextsOffset':0x00000000
+       }
+     });
+ 
+diff --git a/node_modules/smb2/lib/messages/open_folder.js b/node_modules/smb2/lib/messages/open_folder.js
+index 5a3f046..efbcc8e 100644
+--- a/node_modules/smb2/lib/messages/open_folder.js
++++ b/node_modules/smb2/lib/messages/open_folder.js
+@@ -25,7 +25,7 @@ module.exports = message({
+       , 'CreateDisposition':0x00000001
+       , 'CreateOptions':0x00200021
+       , 'NameOffset':0x0078
+-      , 'CreateContextsOffset':0x007A+buffer.length
++      , 'CreateContextsOffset':0x00000000
+       }
+     });
+ 
